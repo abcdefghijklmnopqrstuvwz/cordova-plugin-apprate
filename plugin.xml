@@ -26,7 +26,7 @@
     </js-module-->
 
     <platform name="android">
-        <source-file src="src/android/AppRate.java" target-dir="com/eduardokraus/cordova/apprate"/>
+        <source-file src="src/android/AppRate.java" target-dir="com/eduardokraus/apprate"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="AppRate">
