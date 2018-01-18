@@ -213,7 +213,7 @@ AppRate = (function () {
         }
     };
 
-    AppRate.promptForRating = function ( immediately ) {
+    AppRate.reset = function ( immediately ) {
         updateCounter ( 'reset' );
         return this;
     };
