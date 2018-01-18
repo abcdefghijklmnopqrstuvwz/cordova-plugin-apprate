@@ -96,6 +96,10 @@ AppRate = (function () {
             case 'increment':
                 if ( counter.countdown <= AppRate.preferences.usesUntilPrompt ) {
                     counter.countdown++;
+
+                    if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
+                        showDialog ();
+                    }
                 }
                 break;
             case 'reset':
@@ -119,23 +123,18 @@ AppRate = (function () {
         localStorageParam ( LOCAL_STORAGE_IOS_RATING, JSON.stringify ( iOSRating ) );
     };
 
-    var showDialog = function ( immediately ) {
-        var base = AppRate.preferences.callbacks;
-        if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
-
-            if ( AppRate.preferences.simpleMode ) {
-                navigator.notification.confirm ( AppRate.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
-            } else {
-                navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, AppRate.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
-            }
-
-            if ( typeof base.onRateDialogShow === "function" ) {
-                base.onRateDialogShow ( promptForStoreRatingWindowButtonClickHandler );
-            }
+    var showDialog = function () {
+        if ( AppRate.preferences.simpleMode ) {
+            navigator.notification.confirm ( AppRate.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
         } else {
-            typeof base.done === "function" ? base.done () : function () {
-            };
+            navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, AppRate.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
         }
+
+        var base = AppRate.preferences.callbacks;
+        if ( typeof base.onRateDialogShow === "function" ) {
+            base.onRateDialogShow ( promptForStoreRatingWindowButtonClickHandler );
+        }
+
         return AppRate;
     };
 
@@ -220,7 +219,8 @@ AppRate = (function () {
 
     AppRate.promptForRating = function ( immediately ) {
         if ( immediately ) {
-            showDialog ( immediately );
+            showDialog ();
+            return;
         }
 
         console.log ( counter );
