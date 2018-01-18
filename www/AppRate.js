@@ -39,7 +39,7 @@ AppRate = (function () {
                 navigator.notification.confirm (
                     AppRate.preferences.customLocale.message,
                     promptForStoreRatingWindowButtonClickHandler,
-                    AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
+                    AppRate.preferences.customLocale.title, [ "Avaliar Agora", "Lembrar mais tarde", "Não, obrigado" ] );
                 break;
         }
         return typeof base.onButtonClicked === "function" ? base.onButtonClicked ( buttonIndex, currentBtn, "AppRatingPrompt" ) : function () {
@@ -52,7 +52,7 @@ AppRate = (function () {
             case 0:
                 updateCounter ( 'reset' );
                 break;
-            case 1:
+            case 3:
                 currentBtn = "Não, obrigado";
                 updateCounter ( 'stop' );
                 break;
@@ -60,7 +60,7 @@ AppRate = (function () {
                 currentBtn = "Lembrar mais tarde";
                 updateCounter ( 'reset' );
                 break;
-            case 3:
+            case 1:
                 currentBtn = "Avaliar Agora";
                 updateCounter ( 'stop' );
                 AppRate.navigateToAppStore ();
@@ -125,7 +125,9 @@ AppRate = (function () {
 
     var showDialog = function () {
         if ( AppRate.preferences.simpleMode ) {
-            navigator.notification.confirm ( AppRate.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
+            navigator.notification.confirm (
+                AppRate.preferences.customLocale.message,
+                promptForStoreRatingWindowButtonClickHandler, AppRate.preferences.customLocale.title, [ "Avaliar Agora", "Lembrar mais tarde", "Não, obrigado" ] );
         } else {
             navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, AppRate.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
         }
