@@ -22,10 +22,6 @@
 
 @interface CDVAppRate : CDVPlugin <SKStoreProductViewControllerDelegate>
 
-- (void)getAppVersion:(CDVInvokedUrlCommand *)command;
-
-- (void)getAppTitle:(CDVInvokedUrlCommand *)command;
-
 - (void)launchiOSReview:(CDVInvokedUrlCommand *)command;
 
 - (void)launchAppStore:(NSString *)appId;

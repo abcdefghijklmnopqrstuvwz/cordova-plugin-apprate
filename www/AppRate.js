@@ -3,8 +3,8 @@ var AppRate, exec;
 exec = require ( 'cordova/exec' );
 
 AppRate = (function () {
-    var FLAG_NATIVE_CODE_SUPPORTED, LOCAL_STORAGE_COUNTER, PREF_STORE_URL_FORMAT_IOS, counter, getAppTitle,
-        getAppVersion, localStorageParam, promptForRatingWindowButtonClickHandler, showDialog, updateCounter;
+    var FLAG_NATIVE_CODE_SUPPORTED, LOCAL_STORAGE_COUNTER, counter,
+        localStorageParam, showDialog, updateCounter;
 
     function AppRate () {
     }
@@ -37,15 +37,15 @@ AppRate = (function () {
             case 1:
                 currentBtn = "Não";
                 if ( typeof base.handleNegativeFeedback === "function" ) {
-                    navigator.notification.confirm ( "", promptForFeedbackWindowButtonClickHandler, "Poderia nos dar um feedback?", [ "Não", "Sim!" ] );
+                    navigator.notification.confirm ( "", promptForFeedbackWindowButtonClickHandler, this.preferences.customLocale.feedbackPromptTitle, [ "Não", "Sim!" ] );
                 }
                 break;
             case 2:
                 currentBtn = "Sim!";
                 navigator.notification.confirm (
-                    "Se você gostou de usar o %@, você se importaria de avaliá-lo? Não vai demorar mais de um minuto. Obrigado por seu apoio!",
+                    this.preferences.customLocale.message,
                     promptForStoreRatingWindowButtonClickHandler,
-                    "Avaliar %@", [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] )
+                    this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
                 break;
         }
         return typeof base.onButtonClicked === "function" ? base.onButtonClicked ( buttonIndex, currentBtn, "AppRatingPrompt" ) : function () {
@@ -126,16 +126,16 @@ AppRate = (function () {
         iOSRating.lastPromptDate = new Date ();
 
         localStorageParam ( LOCAL_STORAGE_IOS_RATING, JSON.stringify ( iOSRating ) );
-    }
+    };
 
     showDialog = function ( immediately ) {
         var base = AppRate.preferences.callbacks;
         if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
 
             if ( AppRate.preferences.simpleMode ) {
-                navigator.notification.confirm ( "Se você gostou de usar o %@, você se importaria de avaliá-lo? Não vai demorar mais de um minuto. Obrigado por seu apoio!", promptForStoreRatingWindowButtonClickHandler, "Avaliar %@", [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
+                navigator.notification.confirm ( this.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
             } else {
-                navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, "Você gosta de usar %@", [ "Não", "Sim!" ] );
+                navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, this.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
             }
 
             if ( typeof base.onRateDialogShow === "function" ) {
@@ -170,24 +170,6 @@ AppRate = (function () {
         return this;
     };
 
-    getAppVersion = function ( successCallback, errorCallback ) {
-        if ( FLAG_NATIVE_CODE_SUPPORTED ) {
-            exec ( successCallback, errorCallback, 'AppRate', 'getAppVersion', [] );
-        } else {
-            successCallback ( counter.applicationVersion );
-        }
-        return AppRate;
-    };
-
-    getAppTitle = function ( successCallback, errorCallback ) {
-        if ( FLAG_NATIVE_CODE_SUPPORTED ) {
-            exec ( successCallback, errorCallback, 'AppRate', 'getAppTitle', [] );
-        } else {
-            successCallback ( AppRate.preferences.displayAppName );
-        }
-        return AppRate;
-    };
-
     AppRate.init = function () {
         if ( localStorageParam ( LOCAL_STORAGE_COUNTER ) ) {
             counter = JSON.parse ( localStorageParam ( LOCAL_STORAGE_COUNTER ) ) || counter;
@@ -201,30 +183,25 @@ AppRate = (function () {
             }
         }
 
-        getAppVersion ( (function ( _this ) {
-            return function ( applicationVersion ) {
-                if ( counter.applicationVersion !== applicationVersion ) {
-                    counter.applicationVersion = applicationVersion;
-                    if ( _this.preferences.promptAgainForEachNewVersion ) {
-                        updateCounter ( 'reset' );
-                    }
+        cordova.getAppVersion.getVersionNumber ( function ( applicationVersion ) {
+            AppConfig.versionNumber = version;
+
+            if ( counter.applicationVersion !== applicationVersion ) {
+                counter.applicationVersion = applicationVersion;
+                if ( _this.preferences.promptAgainForEachNewVersion ) {
+                    updateCounter ( 'reset' );
                 }
-                return _this;
-            };
-        }) ( this ) );
-        getAppTitle ( (function ( _this ) {
-            return function ( displayAppName ) {
-                _this.preferences.displayAppName = displayAppName;
-                return _this;
-            };
-        }) ( this ) );
+            }
+            return _this;
+        } );
+
         return this;
     };
 
     AppRate.preferences = {
         displayAppName               : '',
         simpleMode                   : false,
-        promptAgainForEachNewVersion : true,
+        promptAgainForEachNewVersion : false,
         usesUntilPrompt              : 3,
         inAppReview                  : true,
         callbacks                    : {
@@ -236,6 +213,12 @@ AppRate = (function () {
         storeAppURL                  : {
             ios     : null,
             android : null
+        },
+        customLocale                 : {
+            title               : "Você esta gostando do App?",
+            message             : "Que acha de dizer o que mais gosta?\nAdorariamos ler o que você esta achando e melhorar ainda mais!",
+            appRatePromptTitle  : "Você gosta de usar App",
+            feedbackPromptTitle : "Poderia nos dar um feedback?"
         }
     };
 

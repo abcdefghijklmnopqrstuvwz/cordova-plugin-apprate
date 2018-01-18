@@ -14,25 +14,14 @@
     </engines>
 
     <dependency id="cordova-plugin-dialogs"/>
-    <!--dependency id="cordova-plugin-globalization"/-->
+    <dependency id="cordova-plugin-appversion"/>
     <dependency id="cordova-plugin-inappbrowser"/>
 
     <js-module src="www/AppRate.js" name="AppRate">
         <clobbers target="AppRate"/>
     </js-module>
 
-    <!--js-module src="www/locales.js" name="locales">
-        <runs target="AppRateLocales"/>
-    </js-module-->
-
     <platform name="android">
-        <source-file src="src/android/AppRate.java" target-dir="com/eduardokraus/apprate"/>
-
-        <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="AppRate">
-                <param name="android-package" value="com.eduardokraus.apprate.AppRate"/>
-            </feature>
-        </config-file>
     </platform>
 
     <platform name="ios">
@@ -46,18 +35,6 @@
         <source-file src="src/ios/CDVAppRate.m"/>
 
         <framework src="StoreKit.framework"/>
-    </platform>
-
-    <platform name="blackberry10">
-    </platform>
-
-    <platform name="wp8">
-    </platform>
-
-    <platform name="windows8">
-    </platform>
-
-    <platform name="windows">
     </platform>
 
 </plugin>
