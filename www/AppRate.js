@@ -97,7 +97,7 @@ AppRate = (function () {
                 if ( counter.countdown <= AppRate.preferences.usesUntilPrompt ) {
                     counter.countdown++;
 
-                    if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
+                    if ( counter.countdown === AppRate.preferences.usesUntilPrompt ) {
                         showDialog ();
                     }
                 }
