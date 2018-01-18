@@ -26,11 +26,11 @@
     </js-module-->
 
     <platform name="android">
-        <source-file src="src/android/AppRate.java" target-dir="src/org/pushandplay/cordova/apprate"/>
+        <source-file src="src/android/AppRate.java" target-dir="com/eduardokraus/cordova/apprate"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="AppRate">
-                <param name="android-package" value="org.pushandplay.cordova.apprate.AppRate"/>
+                <param name="android-package" value="com.eduardokraus.apprate.AppRate"/>
             </feature>
         </config-file>
     </platform>
