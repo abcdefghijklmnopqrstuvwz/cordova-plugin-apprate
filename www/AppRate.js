@@ -31,15 +31,15 @@ AppRate = (function () {
             case 1:
                 currentBtn = "Não";
                 if ( typeof base.handleNegativeFeedback === "function" ) {
-                    navigator.notification.confirm ( "", promptForFeedbackWindowButtonClickHandler, this.preferences.customLocale.feedbackPromptTitle, [ "Não", "Sim!" ] );
+                    navigator.notification.confirm ( "", promptForFeedbackWindowButtonClickHandler, AppRate.preferences.customLocale.feedbackPromptTitle, [ "Não", "Sim!" ] );
                 }
                 break;
             case 2:
                 currentBtn = "Sim!";
                 navigator.notification.confirm (
-                    this.preferences.customLocale.message,
+                    AppRate.preferences.customLocale.message,
                     promptForStoreRatingWindowButtonClickHandler,
-                    this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
+                    AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
                 break;
         }
         return typeof base.onButtonClicked === "function" ? base.onButtonClicked ( buttonIndex, currentBtn, "AppRatingPrompt" ) : function () {
@@ -127,9 +127,9 @@ AppRate = (function () {
         if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
 
             if ( AppRate.preferences.simpleMode ) {
-                navigator.notification.confirm ( this.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
+                navigator.notification.confirm ( AppRate.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, AppRate.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
             } else {
-                navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, this.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
+                navigator.notification.confirm ( "", promptForAppRatingWindowButtonClickHandler, AppRate.preferences.customLocale.appRatePromptTitle, [ "Não", "Sim!" ] );
             }
 
             if ( typeof base.onRateDialogShow === "function" ) {
@@ -182,7 +182,7 @@ AppRate = (function () {
 
             if ( counter.applicationVersion !== applicationVersion ) {
                 counter.applicationVersion = applicationVersion;
-                if ( _this.preferences.promptAgainForEachNewVersion ) {
+                if ( AppRate.preferences.promptAgainForEachNewVersion ) {
                     updateCounter ( 'reset' );
                 }
             }
@@ -232,22 +232,22 @@ AppRate = (function () {
             var iOSVersion;
             var iOSStoreUrl;
 
-            if ( this.preferences.inAppReview ) {
+            if ( AppRate.preferences.inAppReview ) {
                 updateiOSRatingData ();
                 var showNativePrompt = iOSRating.timesPrompted < 3;
-                exec ( null, null, 'AppRate', 'launchiOSReview', [ this.preferences.storeAppURL.ios, showNativePrompt ] );
+                exec ( null, null, 'AppRate', 'launchiOSReview', [ AppRate.preferences.storeAppURL.ios, showNativePrompt ] );
             } else {
                 iOSVersion = navigator.userAgent.match ( /OS\s+([\d\_]+)/i )[ 0 ].replace ( /_/g, '.' ).replace ( 'OS ', '' ).split ( '.' );
                 iOSVersion = parseInt ( iOSVersion[ 0 ] ) + (parseInt ( iOSVersion[ 1 ] ) || 0) / 10;
                 if ( iOSVersion < 9 ) {
-                    iOSStoreUrl = PREF_STORE_URL_FORMAT_IOS8 + this.preferences.storeAppURL.ios;
+                    iOSStoreUrl = PREF_STORE_URL_FORMAT_IOS8 + AppRate.preferences.storeAppURL.ios;
                 } else {
-                    iOSStoreUrl = PREF_STORE_URL_PREFIX_IOS9 + this.preferences.storeAppURL.ios + PREF_STORE_URL_POSTFIX_IOS9;
+                    iOSStoreUrl = PREF_STORE_URL_PREFIX_IOS9 + AppRate.preferences.storeAppURL.ios + PREF_STORE_URL_POSTFIX_IOS9;
                 }
                 cordova.InAppBrowser.open ( iOSStoreUrl, '_system', 'location=no' );
             }
         } else if ( /(Android)/i.test ( navigator.userAgent.toLowerCase () ) ) {
-            cordova.InAppBrowser.open ( this.preferences.storeAppURL.android, '_system', 'location=no' );
+            cordova.InAppBrowser.open ( AppRate.preferences.storeAppURL.android, '_system', 'location=no' );
         }
         return this;
     };
