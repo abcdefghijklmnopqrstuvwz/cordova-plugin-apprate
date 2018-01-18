@@ -92,9 +92,6 @@ AppRate = (function () {
     };
 
     var updateCounter = function ( action ) {
-        if ( action == null ) {
-            action = 'increment';
-        }
         switch ( action ) {
             case 'increment':
                 if ( counter.countdown <= AppRate.preferences.usesUntilPrompt ) {
@@ -217,13 +214,18 @@ AppRate = (function () {
     };
 
     AppRate.promptForRating = function ( immediately ) {
+        updateCounter ( 'reset' );
+        return this;
+    };
+
+    AppRate.promptForRating = function ( immediately ) {
         if ( immediately ) {
             showDialog ( immediately );
         }
 
-        console.log(counter);
+        console.log ( counter );
 
-        updateCounter ();
+        updateCounter ( 'increment' );
         return this;
     };
 
