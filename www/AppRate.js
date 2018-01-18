@@ -18,9 +18,7 @@
   * under the License.
   *
   */;
-var AppRate, Locales, localeObj, exec;
-
-Locales = require('./locales');
+var AppRate, exec;
 
 exec = require('cordova/exec');
 
@@ -55,14 +53,17 @@ AppRate = (function() {
         updateCounter('reset');
         break;
       case 1:
-        currentBtn = localeObj.noButtonLabel;
+        currentBtn = "Não";
         if(typeof base.handleNegativeFeedback === "function") {
-          navigator.notification.confirm(localeObj.feedbackPromptMessage, promptForFeedbackWindowButtonClickHandler, localeObj.feedbackPromptTitle, [localeObj.noButtonLabel, localeObj.yesButtonLabel]);
+          navigator.notification.confirm("", promptForFeedbackWindowButtonClickHandler, "Poderia nos dar um feedback?", ["Não", "Sim!"]);
         }
         break;
       case 2:
-        currentBtn = localeObj.yesButtonLabel;
-        navigator.notification.confirm(localeObj.message, promptForStoreRatingWindowButtonClickHandler, localeObj.title, [localeObj.cancelButtonLabel, localeObj.laterButtonLabel, localeObj.rateButtonLabel])
+        currentBtn = "Sim!";
+        navigator.notification.confirm(
+          "Se você gostou de usar o %@, você se importaria de avaliá-lo? Não vai demorar mais de um minuto. Obrigado por seu apoio!", 
+          promptForStoreRatingWindowButtonClickHandler, 
+          "Avaliar %@", ["Não, obrigado", "Lembrar mais tarde", "Avaliar Agora"])
         break;
     }
     return typeof base.onButtonClicked === "function" ? base.onButtonClicked(buttonIndex, currentBtn, "AppRatingPrompt") : function(){ };
@@ -75,15 +76,15 @@ AppRate = (function() {
         updateCounter('reset');
         break;
       case 1:
-        currentBtn = localeObj.cancelButtonLabel;
+        currentBtn = "Não, obrigado";
         updateCounter('stop');
         break;
       case 2:
-        currentBtn = localeObj.laterButtonLabel;
+        currentBtn = "Lembrar mais tarde";
         updateCounter('reset');
         break;
       case 3:
-        currentBtn = localeObj.rateButtonLabel;
+        currentBtn = "Avaliar Agora";
         updateCounter('stop');
         AppRate.navigateToAppStore();
         break;
@@ -98,11 +99,11 @@ AppRate = (function() {
     var base = AppRate.preferences.callbacks, currentBtn = null;
     switch (buttonIndex) {
       case 1:
-        currentBtn = localeObj.noButtonLabel;
+        currentBtn = "Não";
         updateCounter('stop');
         break;
       case 2:
-        currentBtn = localeObj.yesButtonLabel;
+        currentBtn = "Sim!";
         updateCounter('stop');
         base.handleNegativeFeedback();
         break;
@@ -144,12 +145,11 @@ AppRate = (function() {
   showDialog = function(immediately) {
     var base = AppRate.preferences.callbacks;
     if (counter.countdown === AppRate.preferences.usesUntilPrompt || immediately) {
-      localeObj = Locales.getLocale(AppRate.preferences.useLanguage, AppRate.preferences.displayAppName, AppRate.preferences.customLocale);
 
       if(AppRate.preferences.simpleMode) {
-        navigator.notification.confirm(localeObj.message, promptForStoreRatingWindowButtonClickHandler, localeObj.title, [localeObj.cancelButtonLabel, localeObj.laterButtonLabel, localeObj.rateButtonLabel]);
+        navigator.notification.confirm("Se você gostou de usar o %@, você se importaria de avaliá-lo? Não vai demorar mais de um minuto. Obrigado por seu apoio!", promptForStoreRatingWindowButtonClickHandler, "Avaliar %@", ["Não, obrigado", "Lembrar mais tarde", "Avaliar Agora"]);
       } else {
-        navigator.notification.confirm(localeObj.appRatePromptMessage, promptForAppRatingWindowButtonClickHandler, localeObj.appRatePromptTitle, [localeObj.noButtonLabel, localeObj.yesButtonLabel]);
+        navigator.notification.confirm("", promptForAppRatingWindowButtonClickHandler, "Você gosta de usar %@", ["Não", "Sim!"]);
       }
 
       if (typeof base.onRateDialogShow === "function") {
@@ -234,29 +234,23 @@ AppRate = (function() {
     return this;
   };
 
-  AppRate.locales = Locales;
-
   AppRate.preferences = {
-    useLanguage: null,
-    displayAppName: '',
-    simpleMode: false,
-    promptAgainForEachNewVersion: true,
-    usesUntilPrompt: 3,
-    inAppReview: true,
-    callbacks: {
-      onButtonClicked: null,
-      onRateDialogShow: null,
-      handleNegativeFeedback: null,
-      done: null
-    },
-    storeAppURL: {
-      ios: null,
-      android: null,
-      blackberry: null,
-      windows8: null,
-      windows: null
-    },
-    customLocale: null
+      useLanguage: null,
+      displayAppName: '',
+      simpleMode: false,
+      promptAgainForEachNewVersion: true,
+      usesUntilPrompt: 3,
+      inAppReview: true,
+      callbacks: {
+          onButtonClicked: null,
+          onRateDialogShow: null,
+          handleNegativeFeedback: null,
+          done: null
+      },
+      storeAppURL: {
+          ios: null,
+          android: null
+      }
   };
 
   AppRate.promptForRating = function(immediately) {
@@ -298,12 +292,6 @@ AppRate = (function() {
       }
     } else if (/(Android)/i.test(navigator.userAgent.toLowerCase())) {
       cordova.InAppBrowser.open(this.preferences.storeAppURL.android, '_system', 'location=no');
-    } else if (/(Windows|Edge)/i.test(navigator.userAgent.toLowerCase())) {
-      cordova.InAppBrowser.open(this.preferences.storeAppURL.windows, '_blank', 'location=no');
-    } else if (/(BlackBerry)/i.test(navigator.userAgent.toLowerCase())) {
-      cordova.InAppBrowser.open(this.preferences.storeAppURL.blackberry, '_system', 'location=no');
-    } else if (/(IEMobile|Windows Phone)/i.test(navigator.userAgent.toLowerCase())) {
-      cordova.InAppBrowser.open(this.preferences.storeAppURL.windows8, '_system', 'location=no');
     }
     return this;
   };
