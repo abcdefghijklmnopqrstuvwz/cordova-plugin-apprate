@@ -122,9 +122,9 @@ AppRate = (function () {
         localStorageParam ( LOCAL_STORAGE_IOS_RATING, JSON.stringify ( iOSRating ) );
     };
 
-    var showDialog = function () {
+    var showDialog = function ( immediately ) {
         var base = AppRate.preferences.callbacks;
-        if ( counter.countdown === AppRate.preferences.usesUntilPrompt ) {
+        if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
 
             if ( AppRate.preferences.simpleMode ) {
                 navigator.notification.confirm ( this.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
