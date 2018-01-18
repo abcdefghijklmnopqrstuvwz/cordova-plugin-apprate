@@ -3,22 +3,16 @@ var AppRate, exec;
 exec = require ( 'cordova/exec' );
 
 AppRate = (function () {
-    var FLAG_NATIVE_CODE_SUPPORTED, LOCAL_STORAGE_COUNTER, counter,
-        localStorageParam, showDialog, updateCounter;
-
     function AppRate () {
     }
 
-    LOCAL_STORAGE_COUNTER    = 'counter';
-    LOCAL_STORAGE_IOS_RATING = 'iosRating';
+    var LOCAL_STORAGE_COUNTER       = 'counter';
+    var LOCAL_STORAGE_IOS_RATING    = 'iosRating';
+    var PREF_STORE_URL_PREFIX_IOS9  = "itms-apps://itunes.apple.com/app/viewContentsUserReviews/id";
+    var PREF_STORE_URL_POSTFIX_IOS9 = "?action=write-review";
+    var PREF_STORE_URL_FORMAT_IOS8  = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?pageNumber=0&sortOrdering=1&type=Purple+Software&mt=8&id=";
 
-    FLAG_NATIVE_CODE_SUPPORTED = /(iPhone|iPod|iPad|Android)/i.test ( navigator.userAgent.toLowerCase () );
-
-    PREF_STORE_URL_PREFIX_IOS9  = "itms-apps://itunes.apple.com/app/viewContentsUserReviews/id";
-    PREF_STORE_URL_POSTFIX_IOS9 = "?action=write-review";
-    PREF_STORE_URL_FORMAT_IOS8  = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?pageNumber=0&sortOrdering=1&type=Purple+Software&mt=8&id=";
-
-    counter = {
+    var counter = {
         applicationVersion : void 0,
         countdown          : 0
     };
@@ -97,7 +91,7 @@ AppRate = (function () {
         };
     };
 
-    updateCounter = function ( action ) {
+    var updateCounter = function ( action ) {
         if ( action == null ) {
             action = 'increment';
         }
@@ -128,9 +122,9 @@ AppRate = (function () {
         localStorageParam ( LOCAL_STORAGE_IOS_RATING, JSON.stringify ( iOSRating ) );
     };
 
-    showDialog = function ( immediately ) {
+    var showDialog = function () {
         var base = AppRate.preferences.callbacks;
-        if ( counter.countdown === AppRate.preferences.usesUntilPrompt || immediately ) {
+        if ( counter.countdown === AppRate.preferences.usesUntilPrompt ) {
 
             if ( AppRate.preferences.simpleMode ) {
                 navigator.notification.confirm ( this.preferences.customLocale.message, promptForStoreRatingWindowButtonClickHandler, this.preferences.customLocale.title, [ "Não, obrigado", "Lembrar mais tarde", "Avaliar Agora" ] );
@@ -148,7 +142,7 @@ AppRate = (function () {
         return AppRate;
     };
 
-    localStorageParam = function ( itemName, itemValue, action ) {
+    var localStorageParam = function ( itemName, itemValue, action ) {
         if ( itemValue == null ) {
             itemValue = null;
         }
@@ -223,19 +217,21 @@ AppRate = (function () {
     };
 
     AppRate.promptForRating = function ( immediately ) {
-        if ( immediately == null ) {
-            immediately = true;
+        if ( immediately ) {
+            showDialog ( immediately );
         }
-        showDialog ( immediately );
+
+        console.log(counter);
+
         updateCounter ();
         return this;
     };
 
     AppRate.navigateToAppStore = function () {
-        var iOSVersion;
-        var iOSStoreUrl;
-
         if ( /(iPhone|iPod|iPad)/i.test ( navigator.userAgent.toLowerCase () ) ) {
+            var iOSVersion;
+            var iOSStoreUrl;
+
             if ( this.preferences.inAppReview ) {
                 updateiOSRatingData ();
                 var showNativePrompt = iOSRating.timesPrompted < 3;
