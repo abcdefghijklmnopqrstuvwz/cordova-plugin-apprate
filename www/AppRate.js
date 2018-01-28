@@ -176,8 +176,7 @@ AppRate = (function () {
         }
 
         cordova.getAppVersion.getVersionNumber ( function ( applicationVersion ) {
-            AppConfig.versionNumber = version;
-
+            
             if ( counter.applicationVersion !== applicationVersion ) {
                 counter.applicationVersion = applicationVersion;
                 if ( AppRate.preferences.promptAgainForEachNewVersion ) {
