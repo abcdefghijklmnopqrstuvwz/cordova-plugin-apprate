@@ -183,7 +183,7 @@ AppRate = (function () {
                     updateCounter ( 'reset' );
                 }
             }
-            return _this;
+            return this;
         } );
 
         return this;
